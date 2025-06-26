@@ -1362,57 +1362,58 @@
 
                 <!-- Translation Card -->
                 <div class="translation-card">
-                <!-- Language Selection -->
-                <div class="language-selection">
-                  <div class="language-group">
-                    <label class="language-label">From</label>
-                    <select id="source-lang" class="lang-select">
-                      <option value="auto" selected>Auto Detect</option>
-                      ${languages.map(lang => `<option value="${lang.code}">${lang.name}</option>`).join('')}
-                    </select>
-                  </div>
-
-                  <button id="swap-languages" class="swap-btn">⇄</button>
-
-                  <div class="language-group">
-                    <label class="language-label">To</label>
-                    <select id="target-lang" class="lang-select">
-                      ${languages.map(lang => `<option value="${lang.code}" ${lang.code === 'es' ? 'selected' : ''}>${lang.name}</option>`).join('')}
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Text Areas -->
-                <div class="text-areas">
-                  <div class="text-group">
-                    <div class="text-header">
-                      <label class="text-label">Enter text to translate</label>
-                      <button id="voice-input-btn" class="voice-btn" title="Voice input">
-                        <span class="voice-icon">🎤</span>
-                      </button>
+                  <!-- Language Selection -->
+                  <div class="language-selection">
+                    <div class="language-group">
+                      <label class="language-label">From</label>
+                      <select id="source-lang" class="lang-select">
+                        <option value="auto" selected>Auto Detect</option>
+                        ${languages.map(lang => `<option value="${lang.code}">${lang.name}</option>`).join('')}
+                      </select>
                     </div>
-                    <textarea id="source-text" class="text-area" placeholder="Type your text here or click the microphone to speak..."></textarea>
-                  </div>
 
-                  <div class="text-group">
-                    <div class="text-header">
-                      <label class="text-label">Translation</label>
-                      <button id="voice-output-btn" class="voice-btn" title="Listen to translation" disabled>
-                        <span class="voice-icon">🔊</span>
-                      </button>
+                    <button id="swap-languages" class="swap-btn">⇄</button>
+
+                    <div class="language-group">
+                      <label class="language-label">To</label>
+                      <select id="target-lang" class="lang-select">
+                        ${languages.map(lang => `<option value="${lang.code}" ${lang.code === 'es' ? 'selected' : ''}>${lang.name}</option>`).join('')}
+                      </select>
                     </div>
-                    <textarea id="target-text" class="text-area output" placeholder="Translation will appear here..." readonly></textarea>
                   </div>
-                </div>
 
-                <!-- Controls -->
-                <div class="controls">
-                  <button id="clear-input" class="action-btn">Clear</button>
-                  <button id="translate-btn" class="translate-btn">
-                    <span class="btn-text">Translate</span>
-                    <div class="loading-spinner">🔄</div>
-                  </button>
-                  <button id="copy-output" class="action-btn" disabled>Copy</button>
+                  <!-- Text Areas -->
+                  <div class="text-areas">
+                    <div class="text-group">
+                      <div class="text-header">
+                        <label class="text-label">Enter text to translate</label>
+                        <button id="voice-input-btn" class="voice-btn" title="Voice input">
+                          <span class="voice-icon">🎤</span>
+                        </button>
+                      </div>
+                      <textarea id="source-text" class="text-area" placeholder="Type your text here or click the microphone to speak..."></textarea>
+                    </div>
+
+                    <div class="text-group">
+                      <div class="text-header">
+                        <label class="text-label">Translation</label>
+                        <button id="voice-output-btn" class="voice-btn" title="Listen to translation" disabled>
+                          <span class="voice-icon">🔊</span>
+                        </button>
+                      </div>
+                      <textarea id="target-text" class="text-area output" placeholder="Translation will appear here..." readonly></textarea>
+                    </div>
+                  </div>
+
+                  <!-- Controls -->
+                  <div class="controls">
+                    <button id="clear-input" class="action-btn">Clear</button>
+                    <button id="translate-btn" class="translate-btn">
+                      <span class="btn-text">Translate</span>
+                      <div class="loading-spinner">🔄</div>
+                    </button>
+                    <button id="copy-output" class="action-btn" disabled>Copy</button>
+                  </div>
                 </div>
 
                 <!-- Footer Info -->
@@ -1424,7 +1425,22 @@
                     <span id="detected-language"></span>
                   </div>
                 </div>
-              </div>
+
+                <!-- Developed by Divyanshu Verma credit block -->
+                <div class="credit-section">
+                  <div class="credit-title">
+                    <span>👨‍💻</span>
+                    Developer
+                  </div>
+                  <div class="credit-content">
+                    <p class="credit-text">
+                      <strong>Divyanshu Verma</strong>
+                    </p>
+                    <p class="credit-subtitle">
+                      Full-Stack Developer & AI Enthusiast
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
