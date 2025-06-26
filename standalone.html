@@ -1350,21 +1350,6 @@
                     <strong>Trusted by thousands</strong> of users worldwide for personal, business, and educational communication needs.
                   </p>
                 </div>
-
-                <div class="credit-section">
-                  <div class="credit-title">
-                    <span>👨‍💻</span>
-                    Developer
-                  </div>
-                  <div class="credit-content">
-                    <p class="credit-text">
-                      <strong>Divyanshu Verma</strong>
-                    </p>
-                    <p class="credit-subtitle">
-                      Full-Stack Developer & AI Enthusiast
-                    </p>
-                  </div>
-                </div>
               </div>
 
               <!-- Main Content -->
@@ -1382,7 +1367,7 @@
                   <div class="language-group">
                     <label class="language-label">From</label>
                     <select id="source-lang" class="lang-select">
-                      <option value="auto">Auto-detect</option>
+                      <option value="auto" selected>Auto Detect</option>
                       ${languages.map(lang => `<option value="${lang.code}">${lang.name}</option>`).join('')}
                     </select>
                   </div>
@@ -1445,24 +1430,77 @@
           </div>
         `;
 
-        // Translation function
-        async function translateText(text, sourceLang, targetLang) {
+        // Replace detectLanguage function with Detect Language API implementation
+        async function detectLanguage(text) {
+          const url = "https://ws.detectlanguage.com/0.2/detect";
           try {
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
-            const response = await fetch(url);
+            const response = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Authorization": "Bearer 44daf170eda996e112d020f65070d066",
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ q: text })
+            });
             const data = await response.json();
-
-            if (data.responseStatus === 200) {
-              return {
-                translatedText: data.responseData.translatedText,
-                detectedLanguage: sourceLang === 'auto' ? 'auto-detected' : undefined
-              };
+            if (
+              data &&
+              data.data &&
+              data.data.detections &&
+              data.data.detections.length > 0
+            ) {
+              // Return the most probable language code
+              return data.data.detections[0].language;
             } else {
-              throw new Error('Translation failed');
+              throw new Error("Language detection failed");
             }
           } catch (error) {
-            console.error('Translation error:', error);
-            throw new Error('Translation service unavailable. Please try again later.');
+            console.error("Language detection error:", error);
+            throw new Error(error.message || "Language detection service unavailable.");
+          }
+        }
+
+        // Update translateText to support auto-detect if sourceLang is 'auto'
+        async function translateText(text, sourceLang, targetLang) {
+          let actualSourceLang = sourceLang;
+          let detectedLang = null;
+          if (sourceLang === "auto") {
+            detectedLang = await detectLanguage(text);
+            if (detectedLang) {
+              actualSourceLang = detectedLang;
+            } else {
+              throw new Error("Could not auto-detect language");
+            }
+          }
+          const url = "https://text-translator2.p.rapidapi.com/translate";
+          const options = {
+            method: "POST",
+            headers: {
+              "content-type": "application/x-www-form-urlencoded",
+              "X-RapidAPI-Key": "28a1aa8d66msh6d641cebad4d626p1c4f86jsn6d655bf181a3",
+              "X-RapidAPI-Host": "text-translator2.p.rapidapi.com",
+            },
+            body: new URLSearchParams({
+              source_language: actualSourceLang,
+              target_language: targetLang,
+              text: text,
+            }),
+          };
+
+          try {
+            const response = await fetch(url, options);
+            const data = await response.json();
+            if (data && data.data && data.data.translatedText) {
+              return {
+                translatedText: data.data.translatedText,
+                detectedLanguage: detectedLang,
+              };
+            } else {
+              throw new Error(data.message || "Translation failed");
+            }
+          } catch (error) {
+            console.error("Translation error:", error);
+            throw new Error(error.message || "Translation service unavailable. Please try again later.");
           }
         }
 
@@ -1619,8 +1657,11 @@
               voiceOutputBtn.disabled = false;
 
               if (result.detectedLanguage) {
-                detectedLanguage.textContent = 'Language auto-detected';
-                detectedLanguage.style.animation = 'fadeInUp 0.5s ease-out';
+                const langObj = languages.find(l => l.code === result.detectedLanguage);
+                detectedLanguage.textContent = langObj
+                  ? `Detected: ${langObj.name}`
+                  : `Detected: ${result.detectedLanguage}`;
+                detectedLanguage.style.animation = 'fadeIn 0.5s';
               } else {
                 detectedLanguage.textContent = '';
               }
@@ -1638,8 +1679,6 @@
 
           // Swap languages
           swapBtn.addEventListener('click', () => {
-            if (sourceLang.value === 'auto') return;
-
             const tempLang = sourceLang.value;
             sourceLang.value = targetLang.value;
             targetLang.value = tempLang;
@@ -1721,7 +1760,7 @@
           function startRecording() {
             if (!recognition || isRecording) return;
 
-            const langCode = sourceLang.value === 'auto' ? 'en' : sourceLang.value;
+            const langCode = sourceLang.value;
             recognition.lang = getSpeechLangCode(langCode);
 
             recognition.onstart = () => {
